@@ -4,6 +4,9 @@
     <title><![CDATA[Centos7+Hexo+Nginx个人博客踩坑日记]]></title>
     <url>%2F2018%2F01%2F31%2FCentos7%2BHexo%2BNginx%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0%2F</url>
     <content type="text"><![CDATA[Centos7+Hexo+Nginx个人博客踩坑日记]]></content>
+      <categories>
+        <category>Learning</category>
+      </categories>
       <tags>
         <tag>Learning</tag>
       </tags>
