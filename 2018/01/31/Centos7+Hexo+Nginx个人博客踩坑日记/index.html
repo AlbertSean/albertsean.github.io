@@ -113,7 +113,7 @@
 <meta property="og:site_name" content="Albert Sean&#39;s Blog">
 <meta property="og:description" content="前言 本文参照网上各种blog，按照个人习惯编写，环境如题示，在win10下操作；踩过几个坑，后续会更新，写的不到位的还请各位看官见谅~ 推荐参考文章：Git+Nginx+Centos7、或者Hexo博客搭建  步骤一：购买VPS 国内：腾讯、阿里等 国外：Vultr、Bandwagon、Digital ocean等 Notes:个人使用的搬瓦工的，已经用了三年了，之前之前只是为了去看看外面的世界">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-01T09:02:21.262Z">
+<meta property="og:updated_time" content="2018-02-01T10:02:13.715Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Centos7+Hexo+Nginx个人博客踩坑日记">
 <meta name="twitter:description" content="前言 本文参照网上各种blog，按照个人习惯编写，环境如题示，在win10下操作；踩过几个坑，后续会更新，写的不到位的还请各位看官见谅~ 推荐参考文章：Git+Nginx+Centos7、或者Hexo博客搭建  步骤一：购买VPS 国内：腾讯、阿里等 国外：Vultr、Bandwagon、Digital ocean等 Notes:个人使用的搬瓦工的，已经用了三年了，之前之前只是为了去看看外面的世界">
@@ -368,7 +368,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-02-01T17:02:21+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2018-02-01T18:02:13+08:00">
                 2018-02-01
               </time>
             
@@ -446,11 +446,11 @@
 </blockquote>
 </li>
 </ul>
-<h2 id="步骤二：本地配置"><a href="#步骤二：本地配置" class="headerlink" title="步骤二：本地配置"></a>步骤二：本地配置</h2><h4 id="1、安装Git、Node-js"><a href="#1、安装Git、Node-js" class="headerlink" title="1、安装Git、Node.js"></a>1、安装Git、Node.js</h4><ul>
+<h2 id="步骤二：本地配置"><a href="#步骤二：本地配置" class="headerlink" title="步骤二：本地配置"></a>步骤二：本地配置</h2><h3 id="安装Git、Node-js"><a href="#安装Git、Node-js" class="headerlink" title="安装Git、Node.js"></a>安装Git、Node.js</h3><ul>
 <li>Windows直接下载对应安装包<a href="https://git-scm.com/downloads" target="_blank" rel="noopener">Git</a>、<a href="https://nodejs.org/zh-cn/" target="_blank" rel="noopener">Node.js</a></li>
 <li>Mac、linux安装方法可自行搜索</li>
 </ul>
-<h4 id="2、Hexo安装与配置"><a href="#2、Hexo安装与配置" class="headerlink" title="2、Hexo安装与配置"></a>2、Hexo安装与配置</h4><ul>
+<h3 id="Hexo安装与配置"><a href="#Hexo安装与配置" class="headerlink" title="Hexo安装与配置"></a>Hexo安装与配置</h3><ul>
 <li><p>打开Git Bash，输入下列命令安装Hexo</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
 </li>
@@ -493,7 +493,7 @@
 <blockquote>
 <p>若无错误提示信息则说明Nginx启动成功。</p>
 </blockquote>
-<h2 id="步骤四：创建网站管理用户git-可自定义名字"><a href="#步骤四：创建网站管理用户git-可自定义名字" class="headerlink" title="步骤四：创建网站管理用户git(可自定义名字)"></a>步骤四：创建网站管理用户git(可自定义名字)</h2><h4 id="1、本地生成ssh-key"><a href="#1、本地生成ssh-key" class="headerlink" title="1、本地生成ssh key"></a>1、本地生成ssh key</h4><ul>
+<h2 id="步骤四：创建网站管理用户git-可自定义名字"><a href="#步骤四：创建网站管理用户git-可自定义名字" class="headerlink" title="步骤四：创建网站管理用户git(可自定义名字)"></a>步骤四：创建网站管理用户git(可自定义名字)</h2><h3 id="本地生成ssh-key"><a href="#本地生成ssh-key" class="headerlink" title="本地生成ssh key"></a>本地生成ssh key</h3><ul>
 <li><p>在Git Bash中输入：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"xx@xx.com"</span></span><br></pre></td></tr></table></figure>
 </li>
@@ -504,7 +504,7 @@
 </blockquote>
 </li>
 </ul>
-<h4 id="2、服务器上增加用户git，用以专门管理网站"><a href="#2、服务器上增加用户git，用以专门管理网站" class="headerlink" title="2、服务器上增加用户git，用以专门管理网站"></a>2、服务器上增加用户git，用以专门管理网站</h4><ul>
+<h3 id="服务器上增加用户git，用以专门管理网站"><a href="#服务器上增加用户git，用以专门管理网站" class="headerlink" title="服务器上增加用户git，用以专门管理网站"></a>服务器上增加用户git，用以专门管理网站</h3><ul>
 <li><p>新增git用户：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">groupadd sitesManagers  <span class="comment">#创建用户组</span></span><br><span class="line">useradd git -m -g sitesManagers <span class="comment">#将git用户加入用户组</span></span><br><span class="line">passwd git <span class="comment">#设置密码</span></span><br><span class="line">chmod 755 /home/git</span><br></pre></td></tr></table></figure>
 </li>
@@ -534,13 +534,13 @@
 </ul>
 <h2 id="步骤五：服务器创建仓库并修改相应配置"><a href="#步骤五：服务器创建仓库并修改相应配置" class="headerlink" title="步骤五：服务器创建仓库并修改相应配置"></a>步骤五：服务器创建仓库并修改相应配置</h2><blockquote>
 <p>Nginx默认web目录为<code>/usr/share/nginx/html</code>，我们此次将博客目录配置为<code>/var/www/git/public</code>，git仓库路径为<code>/home/git/hexo.git</code>。另外，Nginx的配置目录在<code>/etc/nginx</code>，后面需要用到。</p>
-<h4 id="1、创建博客目录"><a href="#1、创建博客目录" class="headerlink" title="1、创建博客目录"></a>1、创建博客目录</h4></blockquote>
+<h3 id="创建博客目录"><a href="#创建博客目录" class="headerlink" title="创建博客目录"></a>创建博客目录</h3></blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var</span><br><span class="line">mkdir www</span><br><span class="line">chmod 777 www</span><br><span class="line">su git</span><br><span class="line">mkdir -p /var/www/git/public</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>此时可输入：<code>echo &quot;Test Html &gt; index.html&quot;</code>后在浏览器中输入在<code>Hexo.conf</code>中给的地址<code>www.example.com</code>，查看是否会出现<code>Test Html</code>。</p>
 <p>测试完后执行<code>rm index.html</code>删除测试文件。</p>
 </blockquote>
-<h4 id="2、安装git并初始化、配置git仓库"><a href="#2、安装git并初始化、配置git仓库" class="headerlink" title="2、安装git并初始化、配置git仓库"></a>2、安装git并初始化、配置git仓库</h4><ul>
+<h3 id="安装git并初始化、配置git仓库"><a href="#安装git并初始化、配置git仓库" class="headerlink" title="安装git并初始化、配置git仓库"></a>安装git并初始化、配置git仓库</h3><ul>
 <li><p>安装Git：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install git</span><br></pre></td></tr></table></figure>
 </li>
@@ -851,7 +851,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤一：购买VPS"><span class="nav-number">2.</span> <span class="nav-text">步骤一：购买VPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤二：本地配置"><span class="nav-number">3.</span> <span class="nav-text">步骤二：本地配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、安装Git、Node-js"><span class="nav-number">3.0.1.</span> <span class="nav-text">1、安装Git、Node.js</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、Hexo安装与配置"><span class="nav-number">3.0.2.</span> <span class="nav-text">2、Hexo安装与配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤三：服务器安装Nginx"><span class="nav-number">4.</span> <span class="nav-text">步骤三：服务器安装Nginx</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤四：创建网站管理用户git-可自定义名字"><span class="nav-number">5.</span> <span class="nav-text">步骤四：创建网站管理用户git(可自定义名字)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、本地生成ssh-key"><span class="nav-number">5.0.1.</span> <span class="nav-text">1、本地生成ssh key</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、服务器上增加用户git，用以专门管理网站"><span class="nav-number">5.0.2.</span> <span class="nav-text">2、服务器上增加用户git，用以专门管理网站</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤五：服务器创建仓库并修改相应配置"><span class="nav-number">6.</span> <span class="nav-text">步骤五：服务器创建仓库并修改相应配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、创建博客目录"><span class="nav-number">6.0.1.</span> <span class="nav-text">1、创建博客目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、安装git并初始化、配置git仓库"><span class="nav-number">6.0.2.</span> <span class="nav-text">2、安装git并初始化、配置git仓库</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤六：本地站点文件配置"><span class="nav-number">7.</span> <span class="nav-text">步骤六：本地站点文件配置</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤一：购买VPS"><span class="nav-number">2.</span> <span class="nav-text">步骤一：购买VPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤二：本地配置"><span class="nav-number">3.</span> <span class="nav-text">步骤二：本地配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Git、Node-js"><span class="nav-number">3.1.</span> <span class="nav-text">安装Git、Node.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo安装与配置"><span class="nav-number">3.2.</span> <span class="nav-text">Hexo安装与配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤三：服务器安装Nginx"><span class="nav-number">4.</span> <span class="nav-text">步骤三：服务器安装Nginx</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤四：创建网站管理用户git-可自定义名字"><span class="nav-number">5.</span> <span class="nav-text">步骤四：创建网站管理用户git(可自定义名字)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#本地生成ssh-key"><span class="nav-number">5.1.</span> <span class="nav-text">本地生成ssh key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器上增加用户git，用以专门管理网站"><span class="nav-number">5.2.</span> <span class="nav-text">服务器上增加用户git，用以专门管理网站</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤五：服务器创建仓库并修改相应配置"><span class="nav-number">6.</span> <span class="nav-text">步骤五：服务器创建仓库并修改相应配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建博客目录"><span class="nav-number">6.1.</span> <span class="nav-text">创建博客目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装git并初始化、配置git仓库"><span class="nav-number">6.2.</span> <span class="nav-text">安装git并初始化、配置git仓库</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤六：本地站点文件配置"><span class="nav-number">7.</span> <span class="nav-text">步骤六：本地站点文件配置</span></a></li></ol></div>
             
 
           </div>

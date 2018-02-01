@@ -1,240 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search> 
-  
-    
-    <entry>
-      <title><![CDATA[Centos7+Hexo+Nginx个人博客踩坑日记]]></title>
-      <url>/2018/01/31/Centos7+Hexo+Nginx%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0/</url>
-      <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
-<p>本文参照网上各种blog，按照个人习惯编写，环境如题示，在win10下操作；踩过几个坑，后续会更新，写的不到位的还请各位看官见谅~</p>
-<p>推荐参考文章：<a href="https://www.jianshu.com/p/d83c77125287" target="_blank" rel="noopener">Git+Nginx+Centos7</a>、或者<a href="https://www.cnblogs.com/fqyi/p/6507114.html#%E9%85%8D%E7%BD%AESSH" target="_blank" rel="noopener">Hexo博客搭建</a></p>
-</blockquote>
-<h2 id="步骤一：购买VPS"><a href="#步骤一：购买VPS" class="headerlink" title="步骤一：购买VPS"></a>步骤一：购买VPS</h2><ul>
-<li>国内：腾讯、阿里等<br></li>
-<li>国外：Vultr、Bandwagon、Digital ocean等<blockquote>
-<p>Notes:个人使用的搬瓦工的，已经用了三年了，之前之前只是为了去看看外面的世界，买的OVZ的；这次正好赶上Bandwagon$19.99/year的套餐有库存，赶紧入手了一波KVM的；相关OVZ与KVM的优劣等请自行百度或者参考<a href="http://banwagong.cn/ovz-kvm.html" target="_blank" rel="noopener">这篇文章</a></p>
-</blockquote>
-</li>
-</ul>
-<h2 id="步骤二：本地配置"><a href="#步骤二：本地配置" class="headerlink" title="步骤二：本地配置"></a>步骤二：本地配置</h2><h4 id="1、安装Git、Node-js"><a href="#1、安装Git、Node-js" class="headerlink" title="1、安装Git、Node.js"></a>1、安装Git、Node.js</h4><ul>
-<li>Windows直接下载对应安装包<a href="https://git-scm.com/downloads" target="_blank" rel="noopener">Git</a>、<a href="https://nodejs.org/zh-cn/" target="_blank" rel="noopener">Node.js</a></li>
-<li>Mac、linux安装方法可自行搜索</li>
-</ul>
-<h4 id="2、Hexo安装与配置"><a href="#2、Hexo安装与配置" class="headerlink" title="2、Hexo安装与配置"></a>2、Hexo安装与配置</h4><ul>
-<li><p>打开Git Bash，输入下列命令安装Hexo</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>选择一个文件夹，作为你本地博客目录，例如<code>D:/blog</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo init blog    <span class="comment">#blog为上述博客目录</span></span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装hexo deploy-git插件：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="步骤三：服务器安装Nginx"><a href="#步骤三：服务器安装Nginx" class="headerlink" title="步骤三：服务器安装Nginx"></a>步骤三：服务器安装Nginx</h2><p><strong> 使用ssh登陆软件如<a href="https://www.putty.org/" target="_blank" rel="noopener">Putty</a>、<a href="https://xshell.en.softonic.com/?ex=DSK-347.0" target="_blank" rel="noopener">Xshell</a>、<a href="https://www.vandyke.com/products/securecrt/" target="_blank" rel="noopener">SecureCRT</a>等远程连接你的VPS</strong></p>
-<ul>
-<li><p>Centos7默认的包管理器yum里没有Nginx包，自行添加：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install epel-release</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>然后安装Nginx：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install nginx</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<blockquote>
-<p>若此处安装失败，则重新执行下列命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm</span><br><span class="line">sudo yum install nginx</span><br></pre></td></tr></table></figure></p>
-</blockquote>
-<ul>
-<li><p>Nginx校验：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx -v </span><br><span class="line"><span class="comment">#返回nginx version: nginx/x.x.x则成功</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在<code>/etc/nginx/conf.d/</code>目录下创建Hexo配置文件<code>hexo.conf</code>并配置如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">  root /var/www/git/public; <span class="comment"># 站点目录</span></span><br><span class="line">  index index.html index.htm; <span class="comment"># 主页</span></span><br><span class="line">  server_name www.example.com example.com; <span class="comment"># 填你的域名</span></span><br><span class="line">  location / &#123;  <span class="comment"># 当输入的网址不存在时，会尝试重定向到404页面</span></span><br><span class="line">    try_files <span class="variable">$uri</span> <span class="variable">$uri</span>/ /404/;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>修改nginx配置文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在<code>http{}</code>的<code>include /etc/nginx/conf.d/*.conf</code>后面加入如下代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include /var/www/*.conf;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>启动Nginx服务：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service nginx reload</span><br><span class="line">/etc/init.d/nginx start</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<blockquote>
-<p>若无错误提示信息则说明Nginx启动成功。</p>
-</blockquote>
-<h2 id="步骤四：创建网站管理用户git-可自定义名字"><a href="#步骤四：创建网站管理用户git-可自定义名字" class="headerlink" title="步骤四：创建网站管理用户git(可自定义名字)"></a>步骤四：创建网站管理用户git(可自定义名字)</h2><h4 id="1、本地生成ssh-key"><a href="#1、本地生成ssh-key" class="headerlink" title="1、本地生成ssh key"></a>1、本地生成ssh key</h4><ul>
-<li><p>在Git Bash中输入：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"xx@xx.com"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行命令后，会在<code>C:\Users\{user-name}\.ssh</code>中生成下列文件：</p>
-<blockquote>
-<p>id_rsa //私钥</p>
-<p>id_rsa.pub //公钥</p>
-</blockquote>
-</li>
-</ul>
-<h4 id="2、服务器上增加用户git，用以专门管理网站"><a href="#2、服务器上增加用户git，用以专门管理网站" class="headerlink" title="2、服务器上增加用户git，用以专门管理网站"></a>2、服务器上增加用户git，用以专门管理网站</h4><ul>
-<li><p>新增git用户：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">groupadd sitesManagers  <span class="comment">#创建用户组</span></span><br><span class="line">useradd git -m -g sitesManagers <span class="comment">#将git用户加入用户组</span></span><br><span class="line">passwd git <span class="comment">#设置密码</span></span><br><span class="line">chmod 755 /home/git</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>切换用户</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su git</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>创建authorized_keys文件：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/git   <span class="comment">#进入用户根目录</span></span><br><span class="line">mkdir .ssh</span><br><span class="line"><span class="built_in">cd</span> .ssh</span><br><span class="line">vi authorized_keys</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将上面第一部生成的公钥<code>id_rsa.pub</code>中的内容复制到authorized_keys中并保存。</p>
-<blockquote>
-<p>此处涉及vim操作的简单命令，<code>i</code>为插入内容，<code>ESC</code>进入命令模式，<code>:wq</code>保存修改并退出，<code>:q!</code>忽略修改并退出，相关内容可自行搜索。</p>
-</blockquote>
-</li>
-<li><p>修改权限：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 700 ~/.ssh</span><br><span class="line">chmod 600 ~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
-</li>
-<li><blockquote>
-<p>常见文件权限有：777、755、600等，详情可自行搜索或参见我后续博客</p>
-</blockquote>
-</li>
-<li><p>打开windows cmd，输入：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh git@server-ip   <span class="comment">#server-ip为你服务器的IP</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>若连接成功则上述配置OK了。</p>
-</li>
-</ul>
-<h2 id="步骤五：服务器创建仓库并修改相应配置"><a href="#步骤五：服务器创建仓库并修改相应配置" class="headerlink" title="步骤五：服务器创建仓库并修改相应配置"></a>步骤五：服务器创建仓库并修改相应配置</h2><blockquote>
-<p>Nginx默认web目录为<code>/usr/share/nginx/html</code>，我们此次将博客目录配置为<code>/var/www/git/public</code>，git仓库路径为<code>/home/git/hexo.git</code>。另外，Nginx的配置目录在<code>/etc/nginx</code>，后面需要用到。</p>
-<h4 id="1、创建博客目录"><a href="#1、创建博客目录" class="headerlink" title="1、创建博客目录"></a>1、创建博客目录</h4></blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var</span><br><span class="line">mkdir www</span><br><span class="line">chmod 777 www</span><br><span class="line">su git</span><br><span class="line">mkdir -p /var/www/git/public</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>此时可输入：<code>echo &quot;Test Html &gt; index.html&quot;</code>后在浏览器中输入在<code>Hexo.conf</code>中给的地址<code>www.example.com</code>，查看是否会出现<code>Test Html</code>。</p>
-<p>测试完后执行<code>rm index.html</code>删除测试文件。</p>
-</blockquote>
-<h4 id="2、安装git并初始化、配置git仓库"><a href="#2、安装git并初始化、配置git仓库" class="headerlink" title="2、安装git并初始化、配置git仓库"></a>2、安装git并初始化、配置git仓库</h4><ul>
-<li><p>安装Git：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install git</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>为避免后续deploy的问题，修改VPS的ssh端口号为22（ssh默认端口号为22）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>下拉至最后一行,改为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Port 22</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>初始化Git仓库：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">su git</span><br><span class="line">cd /home/git</span><br><span class="line">mkdir Hexo.git</span><br><span class="line">cd Hexo.git</span><br><span class="line">git init --bare</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>配置Git仓库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. cd hooks</span><br><span class="line">2. touch post-receive</span><br><span class="line">3. chmod 755 post-receive</span><br><span class="line">4. vi post-receive</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>输入以下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash -l</span><br><span class="line">GIT_REPO=/home/git/Hexo.git # Git仓库</span><br><span class="line">TMP_GIT_CLONE=/tmp/gitBlog</span><br><span class="line">PUBLIC_WWW=/var/www/git/public # 站点目录</span><br><span class="line">rm -rf $&#123;TMP_GIT_CLONE&#125;</span><br><span class="line">git clone $GIT_REPO $TMP_GIT_CLONE</span><br><span class="line">rm -rf $&#123;PUBLIC_WWW&#125;/*</span><br><span class="line">cp -rf $&#123;TMP_GIT_CLONE&#125;/* $&#123;PUBLIC_WWW&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="步骤六：本地站点文件配置"><a href="#步骤六：本地站点文件配置" class="headerlink" title="步骤六：本地站点文件配置"></a>步骤六：本地站点文件配置</h2><ul>
-<li><p>进入<code>D:/blog</code>文件夹，修改<code>_config.yml</code>末尾为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">    <span class="built_in">type</span>: git</span><br><span class="line">    repo: git@your_vps_ip:Hexo.git <span class="comment">#your_vps_ip为你的VPS的IP</span></span><br><span class="line">    branch: master</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将blog部署到服务器：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p><strong>至此，前期工作就已完成，后续Hexo主体选择与优化等参见后续博客</strong></p>
-]]></content>
-      
-        <categories>
-            
-            <category> Learning </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> Learning </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Hello World]]></title>
-      <url>/2018/01/28/hello-world/</url>
-      <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-]]></content>
-      
-        <categories>
-            
-            <category> Learning </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> Learning </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[hexo常用命令]]></title>
-      <url>/2016/12/01/%E7%BA%AA%E5%BF%B5%E4%B8%80%E4%B8%AA%E8%B5%B7%E7%82%B9/</url>
-      <content type="html"></content>
-      
-        <categories>
-            
-            <category> Sundry </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> Sundry </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[hexo常用命令]]></title>
-      <url>/2016/12/01/hexo%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
-      <content type="html"><![CDATA[<h1 id="HEXO"><a href="#HEXO" class="headerlink" title="HEXO"></a>HEXO</h1><h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>More info: <a href="https://blog.lmintlcx.com/post/0x0002/" target="_blank" rel="noopener">点这成大牛</a></p>
-<a id="more"></a>
-<h2 id="hexo"><a href="#hexo" class="headerlink" title="hexo"></a>hexo</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo -g #安装</span><br><span class="line">npm update hexo -g #升级</span><br><span class="line">hexo init #初始化</span><br></pre></td></tr></table></figure>
-<h2 id="简写"><a href="#简写" class="headerlink" title="简写"></a>简写</h2><p>hexo n “我的博客” == hexo new “我的博客” #新建文章<br>hexo p == hexo publish<br>hexo g == hexo generate#生成<br>hexo s == hexo server #启动服务预览<br>hexo d == hexo deploy#部署</p>
-<h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><p>hexo server #Hexo 会监视文件变动并自动更新，您无须重启服务器。<br>hexo server -s #静态模式<br>hexo server -p 5000 #更改端口<br>hexo server -i 192.168.1.1 #自定义 IP</p>
-<p>hexo clean #清除缓存 网页正常情况下可以忽略此条命令<br>hexo g #生成静态网页<br>hexo d #开始部署</p>
-<h2 id="完成后部署"><a href="#完成后部署" class="headerlink" title="完成后部署"></a>完成后部署</h2><p>| 两个命令的作用是相同的<br>| hexo generate –deploy<br>| hexo deploy –generate</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo deploy -g</span><br><span class="line">hexo server -g</span><br></pre></td></tr></table></figure>
-<h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo new page &lt;title&gt;</span><br><span class="line">hexo new post &lt;title&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="推送到服务器上"><a href="#推送到服务器上" class="headerlink" title="推送到服务器上"></a>推送到服务器上</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n #写文章</span><br><span class="line">hexo g #生成</span><br><span class="line">hexo d #部署 #可与hexo g合并为 hexo d -g</span><br></pre></td></tr></table></figure>
-<h1 id="RSS"><a href="#RSS" class="headerlink" title="RSS"></a>RSS</h1><h2 id="安装RSS插件"><a href="#安装RSS插件" class="headerlink" title="安装RSS插件"></a>安装RSS插件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-feed --save</span><br></pre></td></tr></table></figure>
-<h2 id="开启RSS功能"><a href="#开启RSS功能" class="headerlink" title="开启RSS功能"></a>开启RSS功能</h2><p>编辑hexo/_config.yml，添加如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rss: /atom.xml #rss地址  默认即可</span><br></pre></td></tr></table></figure></p>
-]]></content>
-      
-        <categories>
-            
-            <category> Learning </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> Learning </tag>
-            
-        </tags>
-        
-    </entry>
-    
-  
-  
+<search>
+  <entry>
+    <title><![CDATA[Centos7+Hexo+Nginx个人博客踩坑日记]]></title>
+    <url>%2F2018%2F01%2F31%2FCentos7%2BHexo%2BNginx%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0%2F</url>
+    <content type="text"><![CDATA[前言 本文参照网上各种blog，按照个人习惯编写，环境如题示，在win10下操作；踩过几个坑，后续会更新，写的不到位的还请各位看官见谅~ 推荐参考文章：Git+Nginx+Centos7、或者Hexo博客搭建 步骤一：购买VPS 国内：腾讯、阿里等 国外：Vultr、Bandwagon、Digital ocean等 Notes:个人使用的搬瓦工的，已经用了三年了，之前之前只是为了去看看外面的世界，买的OVZ的；这次正好赶上Bandwagon$19.99/year的套餐有库存，赶紧入手了一波KVM的；相关OVZ与KVM的优劣等请自行百度或者参考这篇文章 步骤二：本地配置安装Git、Node.js Windows直接下载对应安装包Git、Node.js Mac、linux安装方法可自行搜索 Hexo安装与配置 打开Git Bash，输入下列命令安装Hexo 1npm install -g hexo-cli 选择一个文件夹，作为你本地博客目录，例如D:/blog 123hexo init blog #blog为上述博客目录cd blognpm install 安装hexo deploy-git插件： 1npm install hexo-deployer-git --save 步骤三：服务器安装Nginx 使用ssh登陆软件如Putty、Xshell、SecureCRT等远程连接你的VPS Centos7默认的包管理器yum里没有Nginx包，自行添加： 1sudo yum install epel-release 然后安装Nginx： 1sudo yum install nginx 若此处安装失败，则重新执行下列命令：12sudo rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpmsudo yum install nginx Nginx校验： 12nginx -v #返回nginx version: nginx/x.x.x则成功 在/etc/nginx/conf.d/目录下创建Hexo配置文件hexo.conf并配置如下： 12345678server &#123; root /var/www/git/public; # 站点目录 index index.html index.htm; # 主页 server_name www.example.com example.com; # 填你的域名 location / &#123; # 当输入的网址不存在时，会尝试重定向到404页面 try_files $uri $uri/ /404/; &#125;&#125; 修改nginx配置文件 1vi /etc/nginx/nginx.conf 在http{}的include /etc/nginx/conf.d/*.conf后面加入如下代码： 1include /var/www/*.conf; 启动Nginx服务： 12service nginx reload/etc/init.d/nginx start 若无错误提示信息则说明Nginx启动成功。 步骤四：创建网站管理用户git(可自定义名字)本地生成ssh key 在Git Bash中输入： 1ssh-keygen -t rsa -C "xx@xx.com" 执行命令后，会在C:\Users\{user-name}\.ssh中生成下列文件： id_rsa //私钥 id_rsa.pub //公钥 服务器上增加用户git，用以专门管理网站 新增git用户： 1234groupadd sitesManagers #创建用户组useradd git -m -g sitesManagers #将git用户加入用户组passwd git #设置密码chmod 755 /home/git 切换用户 1su git 创建authorized_keys文件： 1234cd /home/git #进入用户根目录mkdir .sshcd .sshvi authorized_keys 将上面第一部生成的公钥id_rsa.pub中的内容复制到authorized_keys中并保存。 此处涉及vim操作的简单命令，i为插入内容，ESC进入命令模式，:wq保存修改并退出，:q!忽略修改并退出，相关内容可自行搜索。 修改权限： 12chmod 700 ~/.sshchmod 600 ~/.ssh/authorized_keys 常见文件权限有：777、755、600等，详情可自行搜索或参见我后续博客 打开windows cmd，输入： 1ssh git@server-ip #server-ip为你服务器的IP 若连接成功则上述配置OK了。 步骤五：服务器创建仓库并修改相应配置 Nginx默认web目录为/usr/share/nginx/html，我们此次将博客目录配置为/var/www/git/public，git仓库路径为/home/git/hexo.git。另外，Nginx的配置目录在/etc/nginx，后面需要用到。 创建博客目录 12345cd /varmkdir wwwchmod 777 wwwsu gitmkdir -p /var/www/git/public 此时可输入：echo &quot;Test Html &gt; index.html&quot;后在浏览器中输入在Hexo.conf中给的地址www.example.com，查看是否会出现Test Html。 测试完后执行rm index.html删除测试文件。 安装git并初始化、配置git仓库 安装Git： 1yum install git 为避免后续deploy的问题，修改VPS的ssh端口号为22（ssh默认端口号为22）： 1vi /etc/ssh/sshd_config 下拉至最后一行,改为： 1Port 22 初始化Git仓库： 12345su gitcd /home/gitmkdir Hexo.gitcd Hexo.gitgit init --bare 配置Git仓库 12341. cd hooks2. touch post-receive3. chmod 755 post-receive4. vi post-receive 输入以下内容：12345678#!/bin/bash -lGIT_REPO=/home/git/Hexo.git # Git仓库TMP_GIT_CLONE=/tmp/gitBlogPUBLIC_WWW=/var/www/git/public # 站点目录rm -rf $&#123;TMP_GIT_CLONE&#125;git clone $GIT_REPO $TMP_GIT_CLONErm -rf $&#123;PUBLIC_WWW&#125;/*cp -rf $&#123;TMP_GIT_CLONE&#125;/* $&#123;PUBLIC_WWW&#125; 步骤六：本地站点文件配置 进入D:/blog文件夹，修改_config.yml末尾为： 1234deploy: type: git repo: git@your_vps_ip:Hexo.git #your_vps_ip为你的VPS的IP branch: master 将blog部署到服务器： 1hexo g -d 至此，前期工作就已完成，后续Hexo主体选择与优化等参见后续博客]]></content>
+      <categories>
+        <category>Learning</category>
+      </categories>
+      <tags>
+        <tag>Learning</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <url>%2F2018%2F01%2F28%2Fhello-world%2F</url>
+    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+      <categories>
+        <category>Learning</category>
+      </categories>
+      <tags>
+        <tag>Learning</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[hexo常用命令]]></title>
+    <url>%2F2016%2F12%2F01%2Fhexo%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%2F</url>
+    <content type="text"><![CDATA[HEXO配置More info: 点这成大牛 hexo123npm install hexo -g #安装npm update hexo -g #升级hexo init #初始化 简写hexo n “我的博客” == hexo new “我的博客” #新建文章hexo p == hexo publishhexo g == hexo generate#生成hexo s == hexo server #启动服务预览hexo d == hexo deploy#部署 服务器hexo server #Hexo 会监视文件变动并自动更新，您无须重启服务器。hexo server -s #静态模式hexo server -p 5000 #更改端口hexo server -i 192.168.1.1 #自定义 IP hexo clean #清除缓存 网页正常情况下可以忽略此条命令hexo g #生成静态网页hexo d #开始部署 完成后部署| 两个命令的作用是相同的| hexo generate –deploy| hexo deploy –generate 12hexo deploy -ghexo server -g 写作12hexo new page &lt;title&gt;hexo new post &lt;title&gt; 推送到服务器上123hexo n #写文章hexo g #生成hexo d #部署 #可与hexo g合并为 hexo d -g RSS安装RSS插件1npm install hexo-generator-feed --save 开启RSS功能编辑hexo/_config.yml，添加如下代码：1rss: /atom.xml #rss地址 默认即可]]></content>
+      <categories>
+        <category>Learning</category>
+      </categories>
+      <tags>
+        <tag>Learning</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[hexo常用命令]]></title>
+    <url>%2F2016%2F12%2F01%2F%E7%BA%AA%E5%BF%B5%E4%B8%80%E4%B8%AA%E8%B5%B7%E7%82%B9%2F</url>
+    <content type="text"></content>
+      <categories>
+        <category>Sundry</category>
+      </categories>
+      <tags>
+        <tag>Sundry</tag>
+      </tags>
+  </entry>
 </search>
