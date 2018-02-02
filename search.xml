@@ -12,9 +12,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Hello World]]></title>
-    <url>%2F2018%2F01%2F28%2Fhello-world%2F</url>
-    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+    <title><![CDATA[hexo常用命令]]></title>
+    <url>%2F2018%2F01%2F29%2Fhexo%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%2F</url>
+    <content type="text"><![CDATA[For More info: 点这成大牛 Hexo123npm install hexo -g #安装npm update hexo -g #升级hexo init #初始化 简写12345hexo n &quot;我的博客&quot; == hexo new &quot;我的博客&quot; #新建文章hexo p == hexo publishhexo g == hexo generate#生成hexo s == hexo server #启动服务预览hexo d == hexo deploy#部署 服务器1234hexo server #Hexo 会监视文件变动并自动更新，您无须重启服务器。hexo server -s #静态模式hexo server -p 5000 #更改端口hexo server -i 192.168.1.1 #自定义 IP 123hexo clean #清除缓存 网页正常情况下可以忽略此条命令hexo g #生成静态网页hexo d #开始部署 完成后部署 两个命令的作用是相同的 12hexo generate --deployhexo deploy --generate 简写成： 12hexo deploy -ghexo server -g 草稿1hexo publish [layout] &lt;title&gt; #发表草稿。 写作12hexo new page &lt;title&gt;hexo new post &lt;title&gt; 推送到服务器上123hexo n #写文章hexo g #生成hexo d #部署 #可与hexo g合并为 hexo d -g RSS安装RSS插件1npm install hexo-generator-feed --save 开启RSS功能 编辑hexo/_config.yml，添加如下代码：1rss: /atom.xml #rss地址 默认即可]]></content>
       <categories>
         <category>Learning</category>
       </categories>
@@ -23,9 +23,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[hexo常用命令]]></title>
-    <url>%2F2016%2F12%2F01%2Fhexo%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%2F</url>
-    <content type="text"><![CDATA[HEXO配置More info: 点这成大牛 hexo123npm install hexo -g #安装npm update hexo -g #升级hexo init #初始化 简写hexo n “我的博客” == hexo new “我的博客” #新建文章hexo p == hexo publishhexo g == hexo generate#生成hexo s == hexo server #启动服务预览hexo d == hexo deploy#部署 服务器hexo server #Hexo 会监视文件变动并自动更新，您无须重启服务器。hexo server -s #静态模式hexo server -p 5000 #更改端口hexo server -i 192.168.1.1 #自定义 IP hexo clean #清除缓存 网页正常情况下可以忽略此条命令hexo g #生成静态网页hexo d #开始部署 完成后部署| 两个命令的作用是相同的| hexo generate –deploy| hexo deploy –generate 12hexo deploy -ghexo server -g 写作12hexo new page &lt;title&gt;hexo new post &lt;title&gt; 推送到服务器上123hexo n #写文章hexo g #生成hexo d #部署 #可与hexo g合并为 hexo d -g RSS安装RSS插件1npm install hexo-generator-feed --save 开启RSS功能编辑hexo/_config.yml，添加如下代码：1rss: /atom.xml #rss地址 默认即可]]></content>
+    <title><![CDATA[MarkDown常用语法]]></title>
+    <url>%2F2018%2F01%2F28%2FMarkdown%E5%B8%B8%E7%94%A8%E8%AF%AD%E6%B3%95%2F</url>
+    <content type="text"><![CDATA[About MarkDown Markdown 是一个 Web 上使用的文本到HTML的转换工具，可以通过简单、易读易写的文本格式生成结构化的HTML文档。目前 github、Stackoverflow 等网站均支持这种格式。 常用语法：引用例1 > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, > consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. > > Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus. > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse or > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus. > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing. 输出为： > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, > consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. > > Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus. > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse **例2** > > This is nested blockquote > > Back to the first level. 输出为： > > This is nested blockquote. > > Back to the first level. ### 无序列表 **例1** * Red * Green * Blue 输出为： * Red * Green * Blue **例2** + Red + Green + Blue 输出为： + Red + Green + Blue **例3** - Red - Green - Blue 输出为： - Red - Green - Blue ### 有序列表 1. Red 2. Green 3. Blue 输出为： 1. Red 2. Green 3. Blue ### 分割线 * * * *** ***** - - - --------------------------------------- 输出为： * * * *** ***** - - - --------------------------------------- ### 代码 **例1** 1234567891011# !python# -*- coding: utf-8 -*-from flask import Flask, render_templateapp = Flask(__name__)app.debug = APP_DEBUG#homepage just for fun@app.route('/')def home(): return render_template('index.html') 输出为： 1234567891011# !python# -*- coding: utf-8 -*-from flask import Flask, render_templateapp = Flask(__name__)app.debug = APP_DEBUG#homepage just for fun@app.route('/')def home(): return render_template('index.html') 例2 #!python # -*- coding: utf-8 -*- if __name__ == '__main__': print('Hello World') 输出为： #!python # -*- coding: utf-8 -*- if __name__ == &apos;__main__&apos;: print(&apos;Hello World&apos;) 表格例1 First Header | Second Header --------------|-------------- Content Cell | Content Cell Content Cell | Content Cell 输出为： First Header Second Header Content Cell Content Cell Content Cell Content Cell 例2 |与:之间不能有空格 |First Header | Second Header|Third Header| |:--------------:|:--------------|------------:| |center | left | right| |============ | =============== |============| 输出为： First Second Third center left right ============ ============ ============ 例3 a|b|c :-:|:-|-: center|left|right ============|============|============ 输出为： a b c center left right ============ ============ ============ 链接 [百度](www.baidu.com) 输出为： [百度](www.baidu.com) ### 插入图片 **例1** ![](./01.png '描述') 例2 ![name][01] [01]: ./01.png '描述' 脚注 Markdown[^1] [^1]: Markdown is beautiful! 输出为： Markdown[^1][^1]: Markdown is beautiful! 警告hint类型的警告!!! hint “subject of hint” Any number of other indented markdown elements. note类型的警告!!! note “subject of note” Any number of other indented markdown elements. 黑体、斜体 这是**黑体**写法 这是*斜体*的写法 输出为： 这是黑体写法 这是斜体的写法 链接 这是一个[链接](https://github.com/kamidox/blogs) 这是另外一种[链接][1]的形式 [1]: https://pythonhosted.org/Markdown/extensions/index.html 输出为： 这是一个链接 这是另外一种链接的形式]]></content>
       <categories>
         <category>Learning</category>
       </categories>
@@ -34,9 +34,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[hexo常用命令]]></title>
+    <title><![CDATA[纪念一个起点]]></title>
     <url>%2F2016%2F12%2F01%2F%E7%BA%AA%E5%BF%B5%E4%B8%80%E4%B8%AA%E8%B5%B7%E7%82%B9%2F</url>
-    <content type="text"></content>
+    <content type="text"><![CDATA[| DATE : 2016.12.24 | SITE : NJUST | ROLE : AlbertSean | WHAT : First Blog at [Githubpages]&gt;]]></content>
       <categories>
         <category>Sundry</category>
       </categories>
