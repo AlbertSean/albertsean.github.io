@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[SS梯子搭建与BBR加速配置]]></title>
+    <url>%2F2018%2F02%2F04%2Fss%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%8Ebbr%E5%8A%A0%E9%80%9F%E9%85%8D%E7%BD%AE%2F</url>
+    <content type="text"><![CDATA[前言本文主要写centos7环境下的梯子搭建，搬瓦工的VPS如果装的centos6版本有一键安装选项，只要登陆你的VPS控制面板就OK。For more Info：Click Here Shadowsocks安装与配置 打开putty，输入用户、密码登陆你的服务器 安装pip12curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"python get-pip.py 安装Shadowsocks12pip install --upgrade pippip install shadowsocks 创建配置文件1vi etc/shadowsocks.json 在配置文件中输入如下内容：123456789&#123; &quot;server&quot;:&quot;0.0.0.0&quot;, --服务器IP &quot;server_port&quot;:8888, --端口端口 &quot;password&quot;:&quot;password&quot;, --密码 &quot;method&quot;:&quot;aes-256-cfb&quot;, --加密策略，一般选择aes-256-cfb &quot;local_address&quot;: &quot;127.0.0.1&quot;, --本地地址，可省略 &quot;local_port&quot;:1080, --本地端口，可省略 &quot;timeout&quot;:300, --超时时间，可省略&#125; Shadowsocks命令123ssserver -c /etc/shadowsocks.json -d start #启动ssserver -c /etc/shadowsocks.json -d stop #停止ssserver -c /etc/shadowsocks.json -d restart #重启 配置自启动（可选）新建启动控制文件： 1vi /etc/systemd/system/shadowsocks.service 输入如下内容： 123456789[Unit]Description=Shadowsocks[Service]TimeoutStartSec=0ExecStart=/usr/bin/ssserver -c /etc/shadowsocks.json[Install]WantedBy=multi-user.target 注册并启动服务：12systemctl enable shadowsockssystemctl start shadowsocks 查看服务状态：1systemctl status shadowsocks -l 显示如下信息则成功： 123456● shadowsocks.service - Shadowsocks Loaded: loaded (/etc/systemd/system/shadowsocks.service; enabled; vendor preset: disabled) Active: active (running) since Wed 2018-01-31 08:08:08 EST; 1h 29min ago Main PID: 1038 (ssserver) CGroup: /system.slice/shadowsocks.service └─1038 /usr/bin/python /usr/bin/ssserver -c /etc/shadowsocks.json BBR安装 Google BBR是谷歌公司提出的一个开源TCP拥塞控制的算法。在最新的linux 4.9及以上的内核版本中已被采用。 由于Google BBR非常新，任何低于4.9的linux内核版本都需要升级到4.9及以上才能使用，故若VPS本身内核版本较低的话，只有KVM架构的VPS才能使用本教程升级内核并使用，openvz的VPS用户若内核版本较低则无法使用！参考于：Click 一键安装123wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.shchmod +x bbr.sh./bbr.sh 提示重启时，输入y即可。之后输入：1uname -r 可查看版本号。 小问题个人在完成上述步骤后，Nginx停止服务了，博客访问不了，或许是之前的操作出现的问题，大概问题是这样的：1Starting nginx (via systemctl): Job for nginx.service failed. See &apos;systemctl status nginx.service&apos; and &apos;journalctl -xn&apos; for details. 查看运行日志：1234nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use) 很明显，80端口被占用。解决方法如下：1lsof -i -n -P | grep :80 若未安装lsof,执行yum install lsof进行安装；相应的，若要使用到netstat查看状态，执行yum install net-tools进行安装。 得到： 12nginx 2438 root 6u IPv4 44787 0t0 TCP *:http (LISTEN)nginx 2439 nginx 6u IPv4 44787 0t0 TCP *:http (LISTEN) 执行：12kill -9 2438kill -9 2439 将相应服务杀死，重新执行：1service nginx start 即可。 最后，Nginx常见问题可查看这里]]></content>
+      <categories>
+        <category>Learning</category>
+      </categories>
+      <tags>
+        <tag>Learning</tag>
+        <tag>Shadowsocks</tag>
+        <tag>BBR</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Next主题配置]]></title>
     <url>%2F2018%2F02%2F02%2FNext%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%2F</url>
-    <content type="text"><![CDATA[For more Info：Click Here]]></content>
+    <content type="text"><![CDATA[For more Info:Click Here]]></content>
       <categories>
         <category>Learning</category>
       </categories>
