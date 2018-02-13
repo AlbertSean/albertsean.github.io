@@ -1,74 +1,599 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title><![CDATA[SS梯子搭建与BBR加速配置]]></title>
-    <url>%2F2018%2F02%2F04%2Fss%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%8Ebbr%E5%8A%A0%E9%80%9F%E9%85%8D%E7%BD%AE%2F</url>
-    <content type="text"><![CDATA[前言本文主要写centos7环境下的梯子搭建，搬瓦工的VPS如果装的centos6版本有一键安装选项，只要登陆你的VPS控制面板就OK。For more Info：Click Here Shadowsocks安装与配置 打开putty，输入用户、密码登陆你的服务器 安装pip12curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"python get-pip.py 安装Shadowsocks12pip install --upgrade pippip install shadowsocks 创建配置文件1vi etc/shadowsocks.json 在配置文件中输入如下内容：123456789&#123; &quot;server&quot;:&quot;0.0.0.0&quot;, --服务器IP &quot;server_port&quot;:8888, --端口端口 &quot;password&quot;:&quot;password&quot;, --密码 &quot;method&quot;:&quot;aes-256-cfb&quot;, --加密策略，一般选择aes-256-cfb &quot;local_address&quot;: &quot;127.0.0.1&quot;, --本地地址，可省略 &quot;local_port&quot;:1080, --本地端口，可省略 &quot;timeout&quot;:300, --超时时间，可省略&#125; Shadowsocks命令123ssserver -c /etc/shadowsocks.json -d start #启动ssserver -c /etc/shadowsocks.json -d stop #停止ssserver -c /etc/shadowsocks.json -d restart #重启 配置自启动（可选）新建启动控制文件： 1vi /etc/systemd/system/shadowsocks.service 输入如下内容： 123456789[Unit]Description=Shadowsocks[Service]TimeoutStartSec=0ExecStart=/usr/bin/ssserver -c /etc/shadowsocks.json[Install]WantedBy=multi-user.target 注册并启动服务：12systemctl enable shadowsockssystemctl start shadowsocks 查看服务状态：1systemctl status shadowsocks -l 显示如下信息则成功： 123456● shadowsocks.service - Shadowsocks Loaded: loaded (/etc/systemd/system/shadowsocks.service; enabled; vendor preset: disabled) Active: active (running) since Wed 2018-01-31 08:08:08 EST; 1h 29min ago Main PID: 1038 (ssserver) CGroup: /system.slice/shadowsocks.service └─1038 /usr/bin/python /usr/bin/ssserver -c /etc/shadowsocks.json BBR安装 Google BBR是谷歌公司提出的一个开源TCP拥塞控制的算法。在最新的linux 4.9及以上的内核版本中已被采用。 由于Google BBR非常新，任何低于4.9的linux内核版本都需要升级到4.9及以上才能使用，故若VPS本身内核版本较低的话，只有KVM架构的VPS才能使用本教程升级内核并使用，openvz的VPS用户若内核版本较低则无法使用！参考于：Click 一键安装123wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.shchmod +x bbr.sh./bbr.sh 提示重启时，输入y即可。之后输入：1uname -r 可查看版本号。 小问题个人在完成上述步骤后，Nginx停止服务了，博客访问不了，或许是之前的操作出现的问题，大概问题是这样的：1Starting nginx (via systemctl): Job for nginx.service failed. See &apos;systemctl status nginx.service&apos; and &apos;journalctl -xn&apos; for details. 查看运行日志：1234nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use) 很明显，80端口被占用。解决方法如下：1lsof -i -n -P | grep :80 若未安装lsof,执行yum install lsof进行安装；相应的，若要使用到netstat查看状态，执行yum install net-tools进行安装。 得到： 12nginx 2438 root 6u IPv4 44787 0t0 TCP *:http (LISTEN)nginx 2439 nginx 6u IPv4 44787 0t0 TCP *:http (LISTEN) 执行：12kill -9 2438kill -9 2439 将相应服务杀死，重新执行：1service nginx start 即可。 最后，Nginx常见问题可查看这里]]></content>
-      <categories>
-        <category>Learning</category>
-      </categories>
-      <tags>
-        <tag>Learning</tag>
-        <tag>Shadowsocks</tag>
-        <tag>BBR</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[Next主题配置]]></title>
-    <url>%2F2018%2F02%2F02%2FNext%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%2F</url>
-    <content type="text"><![CDATA[For more Info:Click Here]]></content>
-      <categories>
-        <category>Learning</category>
-      </categories>
-      <tags>
-        <tag>Learning</tag>
-        <tag>Hexo</tag>
-        <tag>Next</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[Centos7+Hexo+Nginx个人博客踩坑日记]]></title>
-    <url>%2F2018%2F01%2F31%2FCentos7%2BHexo%2BNginx%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0%2F</url>
-    <content type="text"><![CDATA[前言 本文参照网上各种blog，按照个人习惯编写，环境如题示，在win10下操作；踩过几个坑，后续会更新，写的不到位的还请各位看官见谅~ 推荐参考文章：Git+Nginx+Centos7、或者Hexo博客搭建 步骤一：购买VPS 国内：腾讯、阿里等 国外：Vultr、Bandwagon、Digital ocean等 Notes:个人使用的搬瓦工的，已经用了三年了，之前之前只是为了去看看外面的世界，买的OVZ的；这次正好赶上Bandwagon$19.99/year的套餐有库存，赶紧入手了一波KVM的；相关OVZ与KVM的优劣等请自行百度或者参考这篇文章 步骤二：本地配置安装Git、Node.js Windows直接下载对应安装包Git、Node.js Mac、linux安装方法可自行搜索 Hexo安装与配置 打开Git Bash，输入下列命令安装Hexo 1npm install -g hexo-cli 选择一个文件夹，作为你本地博客目录，例如D:/blog 123hexo init blog #blog为上述博客目录cd blognpm install 安装hexo deploy-git插件： 1npm install hexo-deployer-git --save 步骤三：服务器安装Nginx 使用ssh登陆软件如Putty、Xshell、SecureCRT等远程连接你的VPS Centos7默认的包管理器yum里没有Nginx包，自行添加： 1sudo yum install epel-release 然后安装Nginx： 1sudo yum install nginx 若此处安装失败，则重新执行下列命令：12sudo rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpmsudo yum install nginx Nginx校验： 12nginx -v #返回nginx version: nginx/x.x.x则成功 在/etc/nginx/conf.d/目录下创建Hexo配置文件hexo.conf并配置如下： 12345678server &#123; root /var/www/git/public; # 站点目录 index index.html index.htm; # 主页 server_name www.example.com example.com; # 填你的域名 location / &#123; # 当输入的网址不存在时，会尝试重定向到404页面 try_files $uri $uri/ /404/; &#125;&#125; 修改nginx配置文件 1vi /etc/nginx/nginx.conf 在http{}的include /etc/nginx/conf.d/*.conf后面加入如下代码： 1include /var/www/*.conf; 启动Nginx服务： 12service nginx reload/etc/init.d/nginx start 若无错误提示信息则说明Nginx启动成功。 步骤四：创建网站管理用户git(可自定义名字)本地生成ssh key 在Git Bash中输入： 1ssh-keygen -t rsa -C "xx@xx.com" 执行命令后，会在C:\Users\{user-name}\.ssh中生成下列文件： id_rsa //私钥 id_rsa.pub //公钥 服务器上增加用户git，用以专门管理网站 新增git用户： 1234groupadd sitesManagers #创建用户组useradd git -m -g sitesManagers #将git用户加入用户组passwd git #设置密码chmod 755 /home/git 切换用户 1su git 创建authorized_keys文件： 1234cd /home/git #进入用户根目录mkdir .sshcd .sshvi authorized_keys 将上面第一部生成的公钥id_rsa.pub中的内容复制到authorized_keys中并保存。 此处涉及vim操作的简单命令，i为插入内容，ESC进入命令模式，:wq保存修改并退出，:q!忽略修改并退出，相关内容可自行搜索。 修改权限： 12chmod 700 ~/.sshchmod 600 ~/.ssh/authorized_keys 常见文件权限有：777、755、600等，详情可自行搜索或参见我后续博客 打开windows cmd，输入： 1ssh git@server-ip #server-ip为你服务器的IP 若连接成功则上述配置OK了。 步骤五：服务器创建仓库并修改相应配置 Nginx默认web目录为/usr/share/nginx/html，我们此次将博客目录配置为/var/www/git/public，git仓库路径为/home/git/hexo.git。另外，Nginx的配置目录在/etc/nginx，后面需要用到。 创建博客目录 12345cd /varmkdir wwwchmod 777 wwwsu gitmkdir -p /var/www/git/public 此时可输入：echo &quot;Test Html &gt; index.html&quot;后在浏览器中输入在Hexo.conf中给的地址www.example.com，查看是否会出现Test Html。 测试完后执行rm index.html删除测试文件。 安装git并初始化、配置git仓库 安装Git： 1yum install git 为避免后续deploy的问题，修改VPS的ssh端口号为22（ssh默认端口号为22）： 1vi /etc/ssh/sshd_config 下拉至最后一行,改为： 1Port 22 初始化Git仓库： 12345su gitcd /home/gitmkdir Hexo.gitcd Hexo.gitgit init --bare 配置Git仓库 12341. cd hooks2. touch post-receive3. chmod 755 post-receive4. vi post-receive 输入以下内容：12345678#!/bin/bash -lGIT_REPO=/home/git/Hexo.git # Git仓库TMP_GIT_CLONE=/tmp/gitBlogPUBLIC_WWW=/var/www/git/public # 站点目录rm -rf $&#123;TMP_GIT_CLONE&#125;git clone $GIT_REPO $TMP_GIT_CLONErm -rf $&#123;PUBLIC_WWW&#125;/*cp -rf $&#123;TMP_GIT_CLONE&#125;/* $&#123;PUBLIC_WWW&#125; 步骤六：本地站点文件配置 进入D:/blog文件夹，修改_config.yml末尾为： 1234deploy: type: git repo: git@your_vps_ip:Hexo.git #your_vps_ip为你的VPS的IP branch: master 将blog部署到服务器： 1hexo g -d 至此，前期工作就已完成，后续Hexo主体选择与优化等参见后续博客]]></content>
-      <categories>
-        <category>Learning</category>
-      </categories>
-      <tags>
-        <tag>Learning</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[hexo常用命令]]></title>
-    <url>%2F2018%2F01%2F29%2Fhexo%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%2F</url>
-    <content type="text"><![CDATA[For More info: 点这成大牛 Hexo123npm install hexo -g #安装npm update hexo -g #升级hexo init #初始化 简写12345hexo n &quot;我的博客&quot; == hexo new &quot;我的博客&quot; #新建文章hexo p == hexo publishhexo g == hexo generate#生成hexo s == hexo server #启动服务预览hexo d == hexo deploy#部署 服务器1234hexo server #Hexo 会监视文件变动并自动更新，您无须重启服务器。hexo server -s #静态模式hexo server -p 5000 #更改端口hexo server -i 192.168.1.1 #自定义 IP 123hexo clean #清除缓存 网页正常情况下可以忽略此条命令hexo g #生成静态网页hexo d #开始部署 完成后部署 两个命令的作用是相同的 12hexo generate --deployhexo deploy --generate 简写成： 12hexo deploy -ghexo server -g 草稿1hexo publish [layout] &lt;title&gt; #发表草稿。 写作12hexo new page &lt;title&gt;hexo new post &lt;title&gt; 推送到服务器上123hexo n #写文章hexo g #生成hexo d #部署 #可与hexo g合并为 hexo d -g RSS安装RSS插件1npm install hexo-generator-feed --save 开启RSS功能 编辑hexo/_config.yml，添加如下代码：1rss: /atom.xml #rss地址 默认即可]]></content>
-      <categories>
-        <category>Learning</category>
-      </categories>
-      <tags>
-        <tag>Learning</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[MarkDown常用语法]]></title>
-    <url>%2F2018%2F01%2F28%2FMarkdown%E5%B8%B8%E7%94%A8%E8%AF%AD%E6%B3%95%2F</url>
-    <content type="text"><![CDATA[About MarkDown Markdown 是一个 Web 上使用的文本到HTML的转换工具，可以通过简单、易读易写的文本格式生成结构化的HTML文档。目前 github、Stackoverflow 等网站均支持这种格式。 常用语法：引用例1 > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, > consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. > > Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus. > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse or > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus. > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing. 输出为： This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse 例2 > > This is nested blockquote > > Back to the first level. 输出为： This is nested blockquote. Back to the first level. 无序列表例1 * Red * Green * Blue 输出为： Red Green Blue 例2 + Red + Green + Blue 输出为： Red Green Blue 例3 - Red - Green - Blue 输出为： Red Green Blue 有序列表 1. Red 2. Green 3. Blue 输出为： Red Green Blue 分割线 * * * *** ***** - - - --------------------------------------- 输出为： 代码例1 1234567891011# !python# -*- coding: utf-8 -*-from flask import Flask, render_templateapp = Flask(__name__)app.debug = APP_DEBUG#homepage just for fun@app.route('/')def home(): return render_template('index.html') 输出为： 1234567891011# !python# -*- coding: utf-8 -*-from flask import Flask, render_templateapp = Flask(__name__)app.debug = APP_DEBUG#homepage just for fun@app.route('/')def home(): return render_template('index.html') 例2 #!python # -*- coding: utf-8 -*- if __name__ == '__main__': print('Hello World') 输出为： #!python # -*- coding: utf-8 -*- if __name__ == &apos;__main__&apos;: print(&apos;Hello World&apos;) 表格例1 First Header | Second Header --------------|-------------- Content Cell | Content Cell Content Cell | Content Cell 输出为： First Header Second Header Content Cell Content Cell Content Cell Content Cell 例2 |与:之间不能有空格 | First | Second | Third | |:------------:|:-------------|-----------:| |center | left | right | |============ | ============ |============| 输出为： First Second Third center left right ============ ============ ============ 例3 a|b|c :-:|:-|-: center|left|right ============|============|============ 输出为： a b c center left right ============ ============ ============ 链接 [百度](www.baidu.com) 输出为： 百度 插入图片例1 ![](./01.png '描述') 例2 ![name][01] [01]: ./01.png '描述' 脚注 Markdown[^1] [^1]: Markdown is beautiful! 输出为： Markdown[^def][^def]: Markdown is beautiful! 警告hint类型的警告!!! hint “subject of hint” Any number of other indented markdown elements. note类型的警告!!! note “subject of note” Any number of other indented markdown elements. 黑体、斜体 这是**黑体**写法 这是*斜体*的写法 输出为： 这是黑体写法 这是斜体的写法 链接 这是一个[链接](https://github.com/kamidox/blogs) 这是另外一种[链接][1]的形式 [1]: https://pythonhosted.org/Markdown/extensions/index.html 输出为： 这是一个链接 这是另外一种链接的形式]]></content>
-      <categories>
-        <category>Learning</category>
-      </categories>
-      <tags>
-        <tag>Learning</tag>
-        <tag>Markdown</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[纪念一个起点]]></title>
-    <url>%2F2016%2F12%2F01%2F%E7%BA%AA%E5%BF%B5%E4%B8%80%E4%B8%AA%E8%B5%B7%E7%82%B9%2F</url>
-    <content type="text"><![CDATA[| DATE : 2016.12.24 | SITE : NJUST | ROLE : AlbertSean | WHAT : First Blog at [Githubpages]]]></content>
-      <categories>
-        <category>Sundry</category>
-      </categories>
-      <tags>
-        <tag>Sundry</tag>
-      </tags>
-  </entry>
+<search> 
+  
+    
+    <entry>
+      <title><![CDATA[SS梯子搭建与BBR加速配置]]></title>
+      <url>/2018/02/04/ss%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%8Ebbr%E5%8A%A0%E9%80%9F%E9%85%8D%E7%BD%AE/</url>
+      <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文主要写centos7环境下的梯子搭建，搬瓦工的VPS如果装的centos6版本有一键安装选项，只要登陆你的VPS控制面板就OK。<br>For more Info：<a href="http://morning.work/page/2015-12/install-shadowsocks-on-centos-7.html" target="_blank" rel="noopener">Click Here</a></p>
+<h2 id="Shadowsocks安装与配置"><a href="#Shadowsocks安装与配置" class="headerlink" title="Shadowsocks安装与配置"></a>Shadowsocks安装与配置</h2><blockquote>
+<p>打开putty，输入用户、密码登陆你的服务器</p>
+</blockquote>
+<h3 id="安装pip"><a href="#安装pip" class="headerlink" title="安装pip"></a>安装pip</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">"https://bootstrap.pypa.io/get-pip.py"</span> -o <span class="string">"get-pip.py"</span></span><br><span class="line">python get-pip.py</span><br></pre></td></tr></table></figure>
+<h3 id="安装Shadowsocks"><a href="#安装Shadowsocks" class="headerlink" title="安装Shadowsocks"></a>安装Shadowsocks</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install --upgrade pip</span><br><span class="line">pip install shadowsocks</span><br></pre></td></tr></table></figure>
+<h3 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi etc/shadowsocks.json</span><br></pre></td></tr></table></figure>
+<p>在配置文件中输入如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> &quot;server&quot;:&quot;0.0.0.0&quot;,            --服务器IP</span><br><span class="line"> &quot;server_port&quot;:8888,            --端口端口</span><br><span class="line"> &quot;password&quot;:&quot;password&quot;,         --密码</span><br><span class="line"> &quot;method&quot;:&quot;aes-256-cfb&quot;,        --加密策略，一般选择aes-256-cfb</span><br><span class="line"> &quot;local_address&quot;: &quot;127.0.0.1&quot;,  --本地地址，可省略</span><br><span class="line"> &quot;local_port&quot;:1080,             --本地端口，可省略</span><br><span class="line"> &quot;timeout&quot;:300,                 --超时时间，可省略</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Shadowsocks命令"><a href="#Shadowsocks命令" class="headerlink" title="Shadowsocks命令"></a>Shadowsocks命令</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssserver -c /etc/shadowsocks.json -d start    #启动</span><br><span class="line">ssserver -c /etc/shadowsocks.json -d stop     #停止</span><br><span class="line">ssserver -c /etc/shadowsocks.json -d restart  #重启</span><br></pre></td></tr></table></figure>
+<h3 id="配置自启动（可选）"><a href="#配置自启动（可选）" class="headerlink" title="配置自启动（可选）"></a>配置自启动（可选）</h3><p>新建启动控制文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/systemd/system/shadowsocks.service</span><br></pre></td></tr></table></figure>
+<p>输入如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Shadowsocks</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">TimeoutStartSec=0</span><br><span class="line">ExecStart=/usr/bin/ssserver -c /etc/shadowsocks.json</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>注册并启动服务：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> shadowsocks</span><br><span class="line">systemctl start shadowsocks</span><br></pre></td></tr></table></figure></p>
+<p>查看服务状态：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status shadowsocks -l</span><br></pre></td></tr></table></figure></p>
+<p>显示如下信息则成功：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">● shadowsocks.service - Shadowsocks</span><br><span class="line">   Loaded: loaded (/etc/systemd/system/shadowsocks.service; enabled; vendor preset: disabled)</span><br><span class="line">   Active: active (running) since Wed 2018-01-31 08:08:08 EST; 1h 29min ago</span><br><span class="line"> Main PID: 1038 (ssserver)</span><br><span class="line">   CGroup: /system.slice/shadowsocks.service</span><br><span class="line">           └─1038 /usr/bin/python /usr/bin/ssserver -c /etc/shadowsocks.json</span><br></pre></td></tr></table></figure>
+<h2 id="BBR安装"><a href="#BBR安装" class="headerlink" title="BBR安装"></a>BBR安装</h2><blockquote>
+<p>Google BBR是谷歌公司提出的一个开源TCP拥塞控制的算法。在最新的linux 4.9及以上的内核版本中已被采用。</p>
+<p>由于Google BBR非常新，任何低于4.9的linux内核版本都需要升级到4.9及以上才能使用，故若VPS本身内核版本较低的话，<strong>只有KVM架构的VPS才能使用本教程升级内核并使用</strong>，openvz的VPS用户若内核版本较低则无法使用！参考于：<a href="https://q.aka.moe/2017/01/28/google-bbr/" target="_blank" rel="noopener">Click</a></p>
+</blockquote>
+<h3 id="一键安装"><a href="#一键安装" class="headerlink" title="一键安装"></a>一键安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh</span><br><span class="line">chmod +x bbr.sh</span><br><span class="line">./bbr.sh</span><br></pre></td></tr></table></figure>
+<p>提示重启时，输入y即可。之后输入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure></p>
+<p>可查看版本号。</p>
+<hr>
+<h2 id="小问题"><a href="#小问题" class="headerlink" title="小问题"></a>小问题</h2><p>个人在完成上述步骤后，Nginx停止服务了，博客访问不了，或许是之前的操作出现的问题，大概问题是这样的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Starting nginx (via systemctl): Job for nginx.service failed. See &apos;systemctl status nginx.service&apos; and &apos;journalctl -xn&apos; for details.</span><br></pre></td></tr></table></figure></p>
+<p>查看运行日志：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</span><br><span class="line">nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</span><br><span class="line">nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</span><br><span class="line">nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</span><br></pre></td></tr></table></figure></p>
+<p>很明显，80端口被占用。解决方法如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -i -n -P | grep :80</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>若未安装lsof,执行<code>yum install lsof</code>进行安装；相应的，若要使用到netstat查看状态，执行<code>yum install net-tools</code><br>进行安装。</p>
+</blockquote>
+<p>得到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx 2438 root 6u IPv4 44787 0t0 TCP *:http (LISTEN)</span><br><span class="line">nginx 2439 nginx 6u IPv4 44787 0t0 TCP *:http (LISTEN)</span><br></pre></td></tr></table></figure>
+<p>执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 2438</span><br><span class="line"><span class="built_in">kill</span> -9 2439</span><br></pre></td></tr></table></figure></p>
+<p>将相应服务杀死，重新执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service nginx start</span><br></pre></td></tr></table></figure></p>
+<p>即可。</p>
+<p><strong>最后，Nginx常见问题可查看<a href="http://blog.csdn.net/a2796749/article/details/50492664" target="_blank" rel="noopener">这里</a></strong></p>
+]]></content>
+      
+        <categories>
+            
+            <category> Learning </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Learning </tag>
+            
+            <tag> Shadowsocks </tag>
+            
+            <tag> BBR </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Next主题配置]]></title>
+      <url>/2018/02/02/Next%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE/</url>
+      <content type="html"><![CDATA[<p>For more Info:<a href="http://blogwenbo.com/2018/01/20/Hexo-NexT%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE/#more" target="_blank" rel="noopener">Click Here</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> Learning </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Learning </tag>
+            
+            <tag> Hexo </tag>
+            
+            <tag> Next </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Centos7+Hexo+Nginx个人博客踩坑日记]]></title>
+      <url>/2018/01/31/Centos7+Hexo+Nginx%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0/</url>
+      <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>本文参照网上各种blog，按照个人习惯编写，环境如题示，在win10下操作；踩过几个坑，后续会更新，写的不到位的还请各位看官见谅~</p>
+<p>推荐参考文章：<a href="https://www.jianshu.com/p/d83c77125287" target="_blank" rel="noopener">Git+Nginx+Centos7</a>、或者<a href="https://www.cnblogs.com/fqyi/p/6507114.html#%E9%85%8D%E7%BD%AESSH" target="_blank" rel="noopener">Hexo博客搭建</a></p>
+</blockquote>
+<h2 id="步骤一：购买VPS"><a href="#步骤一：购买VPS" class="headerlink" title="步骤一：购买VPS"></a>步骤一：购买VPS</h2><ul>
+<li>国内：腾讯、阿里等<br></li>
+<li>国外：Vultr、Bandwagon、Digital ocean等<blockquote>
+<p>Notes:个人使用的搬瓦工的，已经用了三年了，之前之前只是为了去看看外面的世界，买的OVZ的；这次正好赶上Bandwagon$19.99/year的套餐有库存，赶紧入手了一波KVM的；相关OVZ与KVM的优劣等请自行百度或者参考<a href="http://banwagong.cn/ovz-kvm.html" target="_blank" rel="noopener">这篇文章</a></p>
+</blockquote>
+</li>
+</ul>
+<h2 id="步骤二：本地配置"><a href="#步骤二：本地配置" class="headerlink" title="步骤二：本地配置"></a>步骤二：本地配置</h2><h3 id="安装Git、Node-js"><a href="#安装Git、Node-js" class="headerlink" title="安装Git、Node.js"></a>安装Git、Node.js</h3><ul>
+<li>Windows直接下载对应安装包<a href="https://git-scm.com/downloads" target="_blank" rel="noopener">Git</a>、<a href="https://nodejs.org/zh-cn/" target="_blank" rel="noopener">Node.js</a></li>
+<li>Mac、linux安装方法可自行搜索</li>
+</ul>
+<h3 id="Hexo安装与配置"><a href="#Hexo安装与配置" class="headerlink" title="Hexo安装与配置"></a>Hexo安装与配置</h3><ul>
+<li><p>打开Git Bash，输入下列命令安装Hexo</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>选择一个文件夹，作为你本地博客目录，例如<code>D:/blog</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo init blog    <span class="comment">#blog为上述博客目录</span></span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装hexo deploy-git插件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="步骤三：服务器安装Nginx"><a href="#步骤三：服务器安装Nginx" class="headerlink" title="步骤三：服务器安装Nginx"></a>步骤三：服务器安装Nginx</h2><p><strong> 使用ssh登陆软件如<a href="https://www.putty.org/" target="_blank" rel="noopener">Putty</a>、<a href="https://xshell.en.softonic.com/?ex=DSK-347.0" target="_blank" rel="noopener">Xshell</a>、<a href="https://www.vandyke.com/products/securecrt/" target="_blank" rel="noopener">SecureCRT</a>等远程连接你的VPS</strong></p>
+<ul>
+<li><p>Centos7默认的包管理器yum里没有Nginx包，自行添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install epel-release</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后安装Nginx：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install nginx</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>若此处安装失败，则重新执行下列命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm</span><br><span class="line">sudo yum install nginx</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<ul>
+<li><p>Nginx校验：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx -v </span><br><span class="line"><span class="comment">#返回nginx version: nginx/x.x.x则成功</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>/etc/nginx/conf.d/</code>目录下创建Hexo配置文件<code>hexo.conf</code>并配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">  root /var/www/git/public; <span class="comment"># 站点目录</span></span><br><span class="line">  index index.html index.htm; <span class="comment"># 主页</span></span><br><span class="line">  server_name www.example.com example.com; <span class="comment"># 填你的域名</span></span><br><span class="line">  location / &#123;  <span class="comment"># 当输入的网址不存在时，会尝试重定向到404页面</span></span><br><span class="line">    try_files <span class="variable">$uri</span> <span class="variable">$uri</span>/ /404/;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改nginx配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>http{}</code>的<code>include /etc/nginx/conf.d/*.conf</code>后面加入如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include /var/www/*.conf;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动Nginx服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service nginx reload</span><br><span class="line">/etc/init.d/nginx start</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>若无错误提示信息则说明Nginx启动成功。</p>
+</blockquote>
+<h2 id="步骤四：创建网站管理用户git-可自定义名字"><a href="#步骤四：创建网站管理用户git-可自定义名字" class="headerlink" title="步骤四：创建网站管理用户git(可自定义名字)"></a>步骤四：创建网站管理用户git(可自定义名字)</h2><h3 id="本地生成ssh-key"><a href="#本地生成ssh-key" class="headerlink" title="本地生成ssh key"></a>本地生成ssh key</h3><ul>
+<li><p>在Git Bash中输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"xx@xx.com"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行命令后，会在<code>C:\Users\{user-name}\.ssh</code>中生成下列文件：</p>
+<blockquote>
+<p>id_rsa //私钥</p>
+<p>id_rsa.pub //公钥</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="服务器上增加用户git，用以专门管理网站"><a href="#服务器上增加用户git，用以专门管理网站" class="headerlink" title="服务器上增加用户git，用以专门管理网站"></a>服务器上增加用户git，用以专门管理网站</h3><ul>
+<li><p>新增git用户：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">groupadd sitesManagers  <span class="comment">#创建用户组</span></span><br><span class="line">useradd git -m -g sitesManagers <span class="comment">#将git用户加入用户组</span></span><br><span class="line">passwd git <span class="comment">#设置密码</span></span><br><span class="line">chmod 755 /home/git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换用户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建authorized_keys文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/git   <span class="comment">#进入用户根目录</span></span><br><span class="line">mkdir .ssh</span><br><span class="line"><span class="built_in">cd</span> .ssh</span><br><span class="line">vi authorized_keys</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将上面第一部生成的公钥<code>id_rsa.pub</code>中的内容复制到authorized_keys中并保存。</p>
+<blockquote>
+<p>此处涉及vim操作的简单命令，<code>i</code>为插入内容，<code>ESC</code>进入命令模式，<code>:wq</code>保存修改并退出，<code>:q!</code>忽略修改并退出，相关内容可自行搜索。</p>
+</blockquote>
+</li>
+<li><p>修改权限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 700 ~/.ssh</span><br><span class="line">chmod 600 ~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+</li>
+<li><blockquote>
+<p>常见文件权限有：777、755、600等，详情可自行搜索或参见我后续博客</p>
+</blockquote>
+</li>
+<li><p>打开windows cmd，输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh git@server-ip   <span class="comment">#server-ip为你服务器的IP</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若连接成功则上述配置OK了。</p>
+</li>
+</ul>
+<h2 id="步骤五：服务器创建仓库并修改相应配置"><a href="#步骤五：服务器创建仓库并修改相应配置" class="headerlink" title="步骤五：服务器创建仓库并修改相应配置"></a>步骤五：服务器创建仓库并修改相应配置</h2><blockquote>
+<p>Nginx默认web目录为<code>/usr/share/nginx/html</code>，我们此次将博客目录配置为<code>/var/www/git/public</code>，git仓库路径为<code>/home/git/hexo.git</code>。另外，Nginx的配置目录在<code>/etc/nginx</code>，后面需要用到。</p>
+<h3 id="创建博客目录"><a href="#创建博客目录" class="headerlink" title="创建博客目录"></a>创建博客目录</h3></blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var</span><br><span class="line">mkdir www</span><br><span class="line">chmod 777 www</span><br><span class="line">su git</span><br><span class="line">mkdir -p /var/www/git/public</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>此时可输入：<code>echo &quot;Test Html &gt; index.html&quot;</code>后在浏览器中输入在<code>Hexo.conf</code>中给的地址<code>www.example.com</code>，查看是否会出现<code>Test Html</code>。</p>
+<p>测试完后执行<code>rm index.html</code>删除测试文件。</p>
+</blockquote>
+<h3 id="安装git并初始化、配置git仓库"><a href="#安装git并初始化、配置git仓库" class="headerlink" title="安装git并初始化、配置git仓库"></a>安装git并初始化、配置git仓库</h3><ul>
+<li><p>安装Git：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为避免后续deploy的问题，修改VPS的ssh端口号为22（ssh默认端口号为22）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下拉至最后一行,改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Port 22</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化Git仓库：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">su git</span><br><span class="line">cd /home/git</span><br><span class="line">mkdir Hexo.git</span><br><span class="line">cd Hexo.git</span><br><span class="line">git init --bare</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置Git仓库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. cd hooks</span><br><span class="line">2. touch post-receive</span><br><span class="line">3. chmod 755 post-receive</span><br><span class="line">4. vi post-receive</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>输入以下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash -l</span><br><span class="line">GIT_REPO=/home/git/Hexo.git # Git仓库</span><br><span class="line">TMP_GIT_CLONE=/tmp/gitBlog</span><br><span class="line">PUBLIC_WWW=/var/www/git/public # 站点目录</span><br><span class="line">rm -rf $&#123;TMP_GIT_CLONE&#125;</span><br><span class="line">git clone $GIT_REPO $TMP_GIT_CLONE</span><br><span class="line">rm -rf $&#123;PUBLIC_WWW&#125;/*</span><br><span class="line">cp -rf $&#123;TMP_GIT_CLONE&#125;/* $&#123;PUBLIC_WWW&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="步骤六：本地站点文件配置"><a href="#步骤六：本地站点文件配置" class="headerlink" title="步骤六：本地站点文件配置"></a>步骤六：本地站点文件配置</h2><ul>
+<li><p>进入<code>D:/blog</code>文件夹，修改<code>_config.yml</code>末尾为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">    <span class="built_in">type</span>: git</span><br><span class="line">    repo: git@your_vps_ip:Hexo.git <span class="comment">#your_vps_ip为你的VPS的IP</span></span><br><span class="line">    branch: master</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将blog部署到服务器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>至此，前期工作就已完成，后续Hexo主体选择与优化等参见后续博客</strong></p>
+]]></content>
+      
+        <categories>
+            
+            <category> Learning </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Learning </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[hexo常用命令]]></title>
+      <url>/2018/01/29/hexo%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+      <content type="html"><![CDATA[<p>For More info: <a href="https://blog.lmintlcx.com/post/0x0002/" target="_blank" rel="noopener">点这成大牛</a></p>
+<a id="more"></a>
+<h2 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo -g #安装</span><br><span class="line">npm update hexo -g #升级</span><br><span class="line">hexo init #初始化</span><br></pre></td></tr></table></figure>
+<h2 id="简写"><a href="#简写" class="headerlink" title="简写"></a>简写</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hexo n &quot;我的博客&quot; == hexo new &quot;我的博客&quot; #新建文章</span><br><span class="line">hexo p == hexo publish</span><br><span class="line">hexo g == hexo generate#生成</span><br><span class="line">hexo s == hexo server #启动服务预览</span><br><span class="line">hexo d == hexo deploy#部署</span><br></pre></td></tr></table></figure>
+<h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo server #Hexo 会监视文件变动并自动更新，您无须重启服务器。</span><br><span class="line">hexo server -s #静态模式</span><br><span class="line">hexo server -p 5000 #更改端口</span><br><span class="line">hexo server -i 192.168.1.1 #自定义 IP</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean #清除缓存 网页正常情况下可以忽略此条命令</span><br><span class="line">hexo g #生成静态网页</span><br><span class="line">hexo d #开始部署</span><br></pre></td></tr></table></figure>
+<h2 id="完成后部署"><a href="#完成后部署" class="headerlink" title="完成后部署"></a>完成后部署</h2><ul>
+<li><p>两个命令的作用是相同的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo generate --deploy</span><br><span class="line">hexo deploy --generate</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>简写成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo deploy -g</span><br><span class="line">hexo server -g</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="草稿"><a href="#草稿" class="headerlink" title="草稿"></a>草稿</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo publish [layout] &lt;title&gt; #发表草稿。</span><br></pre></td></tr></table></figure>
+<h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo new page &lt;title&gt;</span><br><span class="line">hexo new post &lt;title&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="推送到服务器上"><a href="#推送到服务器上" class="headerlink" title="推送到服务器上"></a>推送到服务器上</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo n #写文章</span><br><span class="line">hexo g #生成</span><br><span class="line">hexo d #部署 #可与hexo g合并为 hexo d -g</span><br></pre></td></tr></table></figure>
+<h1 id="RSS"><a href="#RSS" class="headerlink" title="RSS"></a>RSS</h1><h2 id="安装RSS插件"><a href="#安装RSS插件" class="headerlink" title="安装RSS插件"></a>安装RSS插件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-feed --save</span><br></pre></td></tr></table></figure>
+<h2 id="开启RSS功能"><a href="#开启RSS功能" class="headerlink" title="开启RSS功能"></a>开启RSS功能</h2><ul>
+<li>编辑hexo/_config.yml，添加如下代码：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rss: /atom.xml #rss地址  默认即可</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> Learning </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Learning </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[MarkDown常用语法]]></title>
+      <url>/2018/01/28/Markdown%E5%B8%B8%E7%94%A8%E8%AF%AD%E6%B3%95/</url>
+      <content type="html"><![CDATA[<h2 id="About-MarkDown"><a href="#About-MarkDown" class="headerlink" title="About MarkDown"></a>About <a href="http://www.markdown.cn/" target="_blank" rel="noopener">MarkDown</a></h2><blockquote>
+<p>Markdown 是一个 Web 上使用的文本到HTML的转换工具，可以通过简单、易读易写的文本格式生成结构化的HTML文档。<br>目前 github、Stackoverflow 等网站均支持这种格式。</p>
+</blockquote>
+<h2 id="常用语法："><a href="#常用语法：" class="headerlink" title="常用语法："></a>常用语法：</h2><h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><p><strong>例1</strong></p>
+<pre>
+    > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+    > consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+    > 
+    > Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+    > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+</pre>
+or
+<pre>
+    > This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
+    consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+    Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+
+    > Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+    id sem consectetuer libero luctus adipiscing.
+</pre>
+
+<p>输出为：</p>
+<blockquote>
+<p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,<br>consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.</p>
+<p>Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.<br>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse</p>
+</blockquote>
+<p><strong>例2</strong></p>
+<pre>
+    > > This is nested blockquote
+    >
+    > Back to the first level.
+</pre>
+
+<p>输出为：</p>
+<blockquote>
+<blockquote>
+<p>This is nested blockquote.</p>
+</blockquote>
+<p>Back to the first level.</p>
+</blockquote>
+<h3 id="无序列表"><a href="#无序列表" class="headerlink" title="无序列表"></a>无序列表</h3><p><strong>例1</strong></p>
+<pre>
+    * Red
+    * Green
+    * Blue
+</pre>
+
+<p>输出为：</p>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<p><strong>例2</strong></p>
+<pre>
+    +   Red
+    +   Green
+    +   Blue
+</pre>
+
+<p>输出为：</p>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<p><strong>例3</strong></p>
+<pre>
+    -   Red
+    -   Green
+    -   Blue
+</pre>
+
+<p>输出为：</p>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<h3 id="有序列表"><a href="#有序列表" class="headerlink" title="有序列表"></a>有序列表</h3><pre>
+    1. Red
+    2. Green
+    3. Blue
+</pre>
+
+<p>输出为：</p>
+<ol>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ol>
+<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><pre>
+    * * *
+    ***
+    *****
+    - - -
+    ---------------------------------------
+</pre>
+
+<p>输出为：</p>
+<hr>
+<hr>
+<hr>
+<hr>
+<hr>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p><strong>例1</strong></p>
+<pre>
+    <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.debug = APP_DEBUG</span><br><span class="line"></span><br><span class="line"><span class="comment">#homepage just for fun</span></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>)</span><br></pre></td></tr></table></figure>
+
+</pre>
+
+<p>输出为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.debug = APP_DEBUG</span><br><span class="line"></span><br><span class="line"><span class="comment">#homepage just for fun</span></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>例2</strong></p>
+<pre>
+    #!python
+    # -*- coding: utf-8 -*-
+    if __name__ == '__main__':
+        print('Hello World')
+</pre>
+
+<p>输出为：</p>
+<pre><code>#!python
+# -*- coding: utf-8 -*-
+if __name__ == &apos;__main__&apos;:
+    print(&apos;Hello World&apos;)
+</code></pre><h3 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h3><p><strong>例1</strong></p>
+<pre>
+    First Header  | Second Header
+    --------------|--------------
+    Content Cell  | Content Cell
+    Content Cell  | Content Cell
+</pre>
+
+<p>输出为：</p>
+<table>
+<thead>
+<tr>
+<th>First Header</th>
+<th>Second Header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+</tbody>
+</table>
+<p><strong>例2</strong></p>
+<blockquote>
+<p><code>|</code>与<code>:</code>之间不能有空格</p>
+</blockquote>
+<pre>
+    |   First      |     Second   |     Third  |
+    |:------------:|:-------------|-----------:|
+    |center        |     left     |      right |
+    |============  | ============ |============|
+</pre>
+
+<p>输出为：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">First</th>
+<th style="text-align:left">Second</th>
+<th style="text-align:right">Third</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">center</td>
+<td style="text-align:left">left</td>
+<td style="text-align:right">right</td>
+</tr>
+<tr>
+<td style="text-align:center">============</td>
+<td style="text-align:left">============</td>
+<td style="text-align:right">============</td>
+</tr>
+</tbody>
+</table>
+<p><strong>例3</strong></p>
+<pre>
+    a|b|c
+    :-:|:-|-:
+    center|left|right
+    ============|============|============
+</pre>
+
+<p>输出为：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">a</th>
+<th style="text-align:left">b</th>
+<th style="text-align:right">c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">center</td>
+<td style="text-align:left">left</td>
+<td style="text-align:right">right</td>
+</tr>
+<tr>
+<td style="text-align:center">============</td>
+<td style="text-align:left">============</td>
+<td style="text-align:right">============</td>
+</tr>
+</tbody>
+</table>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><pre>
+    [百度](www.baidu.com)
+</pre>
+
+<p>输出为：</p>
+<p><a href="www.baidu.com">百度</a></p>
+<h3 id="插入图片"><a href="#插入图片" class="headerlink" title="插入图片"></a>插入图片</h3><p><strong>例1</strong></p>
+<pre>
+    ![](./01.png '描述')
+</pre>
+
+<p><img src="mylogo.jpg" alt="" title="MYLOGO"></p>
+<p><strong>例2</strong></p>
+<pre>
+    ![name][01]
+    [01]: ./01.png '描述'
+</pre>
+
+<h3 id="脚注"><a href="#脚注" class="headerlink" title="脚注"></a>脚注</h3><pre>
+    Markdown[^1]
+    [^1]: Markdown is beautiful!
+</pre>
+
+<p>输出为：</p>
+<p>Markdown[^def]<br>[^def]: Markdown is beautiful!</p>
+<h3 id="警告"><a href="#警告" class="headerlink" title="警告"></a>警告</h3><h4 id="hint类型的警告"><a href="#hint类型的警告" class="headerlink" title="hint类型的警告"></a>hint类型的警告</h4><p>!!! hint “subject of hint”<br>    Any number of other indented markdown elements.</p>
+<h4 id="note类型的警告"><a href="#note类型的警告" class="headerlink" title="note类型的警告"></a>note类型的警告</h4><p>!!! note “subject of note”<br>    Any number of other indented markdown elements.</p>
+<h3 id="黑体、斜体"><a href="#黑体、斜体" class="headerlink" title="黑体、斜体"></a>黑体、斜体</h3><pre>
+    这是**黑体**写法
+    这是*斜体*的写法
+</pre>
+
+<p>输出为：</p>
+<p>这是<strong>黑体</strong>写法</p>
+<p>这是<em>斜体</em>的写法</p>
+<h3 id="链接-1"><a href="#链接-1" class="headerlink" title="链接"></a>链接</h3><pre>
+    这是一个[链接](https://github.com/kamidox/blogs)
+    这是另外一种[链接][1]的形式
+
+    [1]: https://pythonhosted.org/Markdown/extensions/index.html
+</pre>
+
+<p>输出为：</p>
+<p>这是一个<a href="https://github.com/kamidox/blogs" target="_blank" rel="noopener">链接</a></p>
+<p>这是另外一种<a href="https://pythonhosted.org/Markdown/extensions/index.html" target="_blank" rel="noopener">链接</a>的形式</p>
+]]></content>
+      
+        <categories>
+            
+            <category> Learning </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Learning </tag>
+            
+            <tag> Markdown </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[纪念一个起点]]></title>
+      <url>/2016/12/01/%E7%BA%AA%E5%BF%B5%E4%B8%80%E4%B8%AA%E8%B5%B7%E7%82%B9/</url>
+      <content type="html"><![CDATA[<hr>
+<pre>
+    | DATE : 2016.12.24
+    | SITE : NJUST
+    | ROLE : AlbertSean
+    | WHAT : First Blog at [Githubpages]
+</pre>
+
+<hr>
+]]></content>
+      
+        <categories>
+            
+            <category> Sundry </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Sundry </tag>
+            
+        </tags>
+        
+    </entry>
+    
+  
+  
 </search>
